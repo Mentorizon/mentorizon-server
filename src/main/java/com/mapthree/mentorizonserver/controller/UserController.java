@@ -1,8 +1,8 @@
 package com.mapthree.mentorizonserver.controller;
 
 import com.mapthree.mentorizonserver.dto.MenteeSignUpDTO;
-import com.mapthree.mentorizonserver.exception.SignupInformationException;
 import com.mapthree.mentorizonserver.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +18,8 @@ public class UserController {
     }
 
     @PostMapping("/mentees")
-    public ResponseEntity<String> saveMentee(@RequestBody MenteeSignUpDTO mentee) {
-        try {
-            userService.saveMentee(mentee);
-        } catch (SignupInformationException e) {
-            e.printStackTrace();  // TODO: research logging possibilities
-            return ResponseEntity.badRequest().body("Failed to save mentee.");
-        }
+    public ResponseEntity<String> saveMentee(@Valid @RequestBody MenteeSignUpDTO mentee) {
+        userService.saveMentee(mentee);
         return ResponseEntity.ok("Mentee saved successfully.");
     }
 }

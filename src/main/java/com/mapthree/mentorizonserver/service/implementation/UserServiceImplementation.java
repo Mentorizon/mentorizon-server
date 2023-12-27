@@ -1,6 +1,7 @@
 package com.mapthree.mentorizonserver.service.implementation;
 
 import com.mapthree.mentorizonserver.dto.MenteeSignUpDTO;
+import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
 import com.mapthree.mentorizonserver.model.User;
 import com.mapthree.mentorizonserver.repository.UserRepository;
@@ -18,7 +19,11 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void saveMentee(MenteeSignUpDTO mentee) throws SignupInformationException {
+    public void saveMentee(MenteeSignUpDTO mentee) {
+        if(userRepository.findByEmail(mentee.getEmail()).isPresent()) {
+            throw new EmailInUseException("User with this email already exists.");
+        }
+
         User newUser = User.builder()
                 .name(mentee.getName())
                 .email(mentee.getEmail())
@@ -32,7 +37,7 @@ public class UserServiceImplementation implements UserService {
             // TODO: Additional logic for handling Google Sign-In
             newUser.setGoogleId(mentee.getGoogleId());
         } else {
-            throw new SignupInformationException("Missing or invalid signup information");
+            throw new SignupInformationException("Missing or invalid signup information.");
         }
 
         userRepository.save(newUser);
