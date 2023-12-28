@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Component
 public class AmazonClient {
@@ -39,7 +38,6 @@ public class AmazonClient {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         this.s3client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(Regions.EU_NORTH_1).build();
-        createBucket();
     }
 
     public void uploadFileToBucket(String fileName, File file, String folderToUpload) {
@@ -68,19 +66,6 @@ public class AmazonClient {
     public InputStream getFileInputStream(String filename, String folderName) {
         S3Object s3object = s3client.getObject(bucketName, folderName + "/" + filename);
         return s3object.getObjectContent();
-    }
-
-    private void createBucket() {
-        if (s3client.doesBucketExistV2(bucketName)) {
-            logger.info("Bucket {} already exists", bucketName);
-            return;
-        }
-        try {
-            logger.info("Creating bucket {}", bucketName);
-            s3client.createBucket(bucketName);
-        } catch (Exception e) {
-            logger.error((ExceptionUtils.getStackTrace(e)));
-        }
     }
 
 }

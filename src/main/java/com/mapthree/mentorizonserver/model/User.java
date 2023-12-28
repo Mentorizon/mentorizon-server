@@ -35,14 +35,17 @@ public class User {
     @Column(name = "is_mentor", nullable = false)
     private boolean isMentor;
 
+    @Column(name = "is_approved")
+    private boolean isApproved;
+
     @Column(name = "is_mentee", nullable = false)
     private boolean isMentee;
 
     @Column(name = "job_title")
     private String jobTitle;
 
-    @Column(name = "cv_url", unique = true)
-    private String cvUrl;
+    @Column(name = "cv_name", unique = true)
+    private String cvName;
 
     @Column(name = "contact_info")
     private String contactInfo;

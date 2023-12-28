@@ -35,7 +35,7 @@ public class FileController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileName") String fileName) {
         byte[] content = fileManager.getFileAsBytes(fileName);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, getFileMediaType(fileName))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .header(HttpHeaders.CONTENT_DISPOSITION, MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(content.length))
                 .body(new ByteArrayResource(content));
@@ -45,18 +45,6 @@ public class FileController {
     public ResponseEntity<Void> deleteFile(@PathVariable("fileName") String fileName) {
         fileManager.deleteFile(fileName);
         return ResponseEntity.noContent().build();
-    }
-
-    private String getFileMediaType(String fileName) {
-        String mediaType;
-        String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
-        mediaType = switch (fileExtension.toLowerCase()) {
-            case "pdf" -> MediaType.APPLICATION_PDF_VALUE;
-            case "png" -> MediaType.IMAGE_PNG_VALUE;
-            case "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
-            default -> MediaType.TEXT_PLAIN_VALUE;
-        };
-        return mediaType;
     }
 
 }
