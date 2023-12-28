@@ -53,13 +53,6 @@ public class AmazonClient {
         s3client.deleteObject(delObjReq);
     }
 
-    public void deleteMultipleFilesFromBucket(List<String> files) {
-        DeleteObjectsRequest delObjReq = new DeleteObjectsRequest(bucketName)
-                .withKeys(files.toArray(new String[0]));
-        logger.info("Deleting files...");
-        s3client.deleteObjects(delObjReq);
-    }
-
     public File getFileFromBucket(String filename, String folderName) {
         InputStream inputStream = getFileInputStream(filename, folderName);
         File file = new File(filename);

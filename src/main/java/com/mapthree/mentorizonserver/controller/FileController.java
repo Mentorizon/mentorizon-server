@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FileController {
 
-    private FileManagerService fileManager;
+    private final FileManagerService fileManager;
 
     @Autowired
     FileController(FileManagerService fileManager) {
@@ -50,19 +50,12 @@ public class FileController {
     private String getFileMediaType(String fileName) {
         String mediaType;
         String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
-        switch (fileExtension.toLowerCase()) {
-            case "pdf":
-                mediaType = MediaType.APPLICATION_PDF_VALUE;
-                break;
-            case "png":
-                mediaType = MediaType.IMAGE_PNG_VALUE;
-                break;
-            case "jpeg":
-                mediaType = MediaType.IMAGE_JPEG_VALUE;
-                break;
-            default:
-                mediaType = MediaType.TEXT_PLAIN_VALUE;
-        }
+        mediaType = switch (fileExtension.toLowerCase()) {
+            case "pdf" -> MediaType.APPLICATION_PDF_VALUE;
+            case "png" -> MediaType.IMAGE_PNG_VALUE;
+            case "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
+            default -> MediaType.TEXT_PLAIN_VALUE;
+        };
         return mediaType;
     }
 
