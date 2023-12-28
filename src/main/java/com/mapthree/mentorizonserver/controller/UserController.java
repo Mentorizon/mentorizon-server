@@ -24,7 +24,7 @@ public class UserController {
         return ResponseEntity.ok("Mentee saved successfully.");
     }
 
-    @PostMapping("/mentors/apply")
+    @PostMapping("/mentors")
     public ResponseEntity<String> saveMentee(@Valid @RequestBody MentorSignUpDTO mentor) {
         userService.saveMentor(mentor);
         return ResponseEntity.ok("Mentor saved successfully.");
