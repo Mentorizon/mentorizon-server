@@ -1,16 +1,16 @@
 package com.mapthree.mentorizonserver.dto;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-@Builder
-public class MentorSignUpDTO {
+public class UserDTO {
 
     private UUID id;
 
@@ -21,15 +21,9 @@ public class MentorSignUpDTO {
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotBlank(message = "Password is mandatory")
     @Size(min = 8, message = "Password should have at least 8 characters.")
-    private String password;
+    private String password; // Can be blank for Google sign-up
 
-    @NotBlank(message = "Job title is mandatory")
-    private String jobTitle;
-
-    @NotBlank(message = "CV is mandatory")
-    private String cvBase64;
-
-    private String contactInfo; // Optional, for mentors who do not have it in CV
+    @JsonProperty("google_id")
+    private String googleId; // Can be blank for email/password sign-up
 }

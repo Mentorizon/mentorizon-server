@@ -1,7 +1,7 @@
 package com.mapthree.mentorizonserver.controller;
 
-import com.mapthree.mentorizonserver.dto.MenteeSignUpDTO;
-import com.mapthree.mentorizonserver.dto.MentorSignUpDTO;
+import com.mapthree.mentorizonserver.dto.MenteeDTO;
+import com.mapthree.mentorizonserver.dto.MentorDTO;
 import com.mapthree.mentorizonserver.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,13 @@ public class UserController {
     }
 
     @PostMapping("/mentees")
-    public ResponseEntity<String> saveMentee(@Valid @RequestBody MenteeSignUpDTO mentee) {
+    public ResponseEntity<String> saveMentee(@Valid @RequestBody MenteeDTO mentee) {
         userService.saveMentee(mentee);
         return ResponseEntity.ok("Mentee saved successfully.");
     }
 
     @PostMapping("/mentors")
-    public ResponseEntity<String> saveMentee(@Valid @RequestBody MentorSignUpDTO mentor) {
+    public ResponseEntity<String> saveMentee(@Valid @RequestBody MentorDTO mentor) {
         userService.saveMentor(mentor);
         return ResponseEntity.ok("Mentor saved successfully.");
     }

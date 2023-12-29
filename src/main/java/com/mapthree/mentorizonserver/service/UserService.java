@@ -1,11 +1,11 @@
 package com.mapthree.mentorizonserver.service;
 
-import com.mapthree.mentorizonserver.dto.MenteeSignUpDTO;
-import com.mapthree.mentorizonserver.dto.MentorSignUpDTO;
+import com.mapthree.mentorizonserver.dto.MenteeDTO;
+import com.mapthree.mentorizonserver.dto.MentorDTO;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-    void saveMentee(MenteeSignUpDTO mentee);
-    void saveMentor(MentorSignUpDTO mentor);
+    void saveMentee(MenteeDTO mentee);
+    void saveMentor(MentorDTO mentor);
 }

@@ -1,8 +1,8 @@
 package com.mapthree.mentorizonserver.service.implementation;
 
 import com.mapthree.mentorizonserver.dto.FileDTO;
-import com.mapthree.mentorizonserver.dto.MenteeSignUpDTO;
-import com.mapthree.mentorizonserver.dto.MentorSignUpDTO;
+import com.mapthree.mentorizonserver.dto.MenteeDTO;
+import com.mapthree.mentorizonserver.dto.MentorDTO;
 import com.mapthree.mentorizonserver.dto.SavedFileDTO;
 import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
@@ -26,7 +26,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void saveMentee(MenteeSignUpDTO mentee) {
+    public void saveMentee(MenteeDTO mentee) {
         if(userRepository.findByEmail(mentee.getEmail()).isPresent()) {
             throw new EmailInUseException("User with this email already exists.");
         }
@@ -50,7 +50,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void saveMentor(MentorSignUpDTO mentor) {
+    public void saveMentor(MentorDTO mentor) {
         if(userRepository.findByEmail(mentor.getEmail()).isPresent()) {
             throw new EmailInUseException("User with this email already exists.");
         }
