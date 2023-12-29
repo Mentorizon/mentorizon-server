@@ -1,11 +1,10 @@
 package com.mapthree.mentorizonserver.service.implementation;
 
-import com.mapthree.mentorizonserver.dto.FileDTO;
-import com.mapthree.mentorizonserver.dto.MenteeDTO;
-import com.mapthree.mentorizonserver.dto.MentorDTO;
-import com.mapthree.mentorizonserver.dto.SavedFileDTO;
+import com.mapthree.mentorizonserver.dto.*;
 import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
+import com.mapthree.mentorizonserver.model.Mentee;
+import com.mapthree.mentorizonserver.model.Mentor;
 import com.mapthree.mentorizonserver.model.User;
 import com.mapthree.mentorizonserver.repository.UserRepository;
 import com.mapthree.mentorizonserver.service.FileManagerService;
@@ -27,52 +26,51 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void saveMentee(MenteeDTO mentee) {
-        if(userRepository.findByEmail(mentee.getEmail()).isPresent()) {
+        if(userRepository.findByEmail(mentee.getEmail()).isPresent())
             throw new EmailInUseException("User with this email already exists.");
-        }
 
-        User newUser = User.builder()
-                .name(mentee.getName())
-                .email(mentee.getEmail())
-                .isMentee(true)
-                .build();
+        Mentee newMentee = createNewMentee(mentee);
+        userRepository.save(newMentee);
+    }
 
-        if(mentee.getPassword() != null && !mentee.getPassword().isBlank()) {
-            newUser.setPassword(mentee.getPassword());
-        } else if(mentee.getGoogleId() != null) {
-            // TODO: Additional logic for handling Google Sign-In
-            newUser.setGoogleId(mentee.getGoogleId());
-        } else {
-            throw new SignupInformationException("Missing or invalid signup information.");
-        }
+    private Mentee createNewMentee(MenteeDTO dto) {
+        Mentee newMentee = new Mentee(dto.getName(), dto.getEmail());
+        setSignUpInfo(newMentee, dto);
 
-        userRepository.save(newUser);
+        return newMentee;
     }
 
     @Override
     public void saveMentor(MentorDTO mentor) {
-        if(userRepository.findByEmail(mentor.getEmail()).isPresent()) {
+        if(userRepository.findByEmail(mentor.getEmail()).isPresent())
             throw new EmailInUseException("User with this email already exists.");
-        }
 
-        User newUser = User.builder()
-                .name(mentor.getName())
-                .email(mentor.getEmail())
-                .isMentor(true)
-                .jobTitle(mentor.getJobTitle())
-                .contactInfo(mentor.getContactInfo())
-                .build();
+        Mentor newMentor = createNewMentor(mentor);
+        userRepository.save(newMentor);
+    }
 
+    private String getCvName(MentorDTO mentor) {
         FileDTO fileDTO = new FileDTO(mentor.getName() + ".pdf", mentor.getCvBase64());
         SavedFileDTO savedFileDTO = fileManager.uploadFile(fileDTO);
-        newUser.setCvName(savedFileDTO.getGeneratedFileName());
+        return savedFileDTO.getGeneratedFileName();
+    }
 
-        if(mentor.getPassword() != null && !mentor.getPassword().isBlank()) {
-            newUser.setPassword(mentor.getPassword());
-        } else {
+    private Mentor createNewMentor(MentorDTO dto) {
+        String cvName = getCvName(dto);
+        Mentor newMentor = new Mentor(dto.getName(), dto.getEmail(), dto.getJobTitle(), cvName);
+        if(dto.getContactInfo() != null)
+            newMentor.setContactInfo(dto.getContactInfo());
+        setSignUpInfo(newMentor, dto);
+
+        return newMentor;
+    }
+
+    private void setSignUpInfo(User user, UserDTO dto) {
+        if(dto.getPassword() != null)
+            user.setPassword(dto.getPassword());
+        else if(dto.getGoogleId() != null)         // TODO: Additional logic for handling Google Sign-In
+            user.setGoogleId(dto.getGoogleId());
+        else
             throw new SignupInformationException("Missing or invalid signup information.");
-        }
-
-        userRepository.save(newUser);
     }
 }
