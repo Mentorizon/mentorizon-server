@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "user_data")
 @Data
 @NoArgsConstructor
@@ -32,21 +34,8 @@ public class User {
     @Column(name = "google_id", unique = true)
     private String googleId;
 
-    @Column(name = "is_mentor", nullable = false)
-    private boolean isMentor;
-
-    @Column(name = "is_approved")
-    private boolean isApproved;
-
-    @Column(name = "is_mentee", nullable = false)
-    private boolean isMentee;
-
-    @Column(name = "job_title")
-    private String jobTitle;
-
-    @Column(name = "cv_name", unique = true)
-    private String cvName;
-
-    @Column(name = "contact_info")
-    private String contactInfo;
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }

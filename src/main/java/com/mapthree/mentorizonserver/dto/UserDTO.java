@@ -24,6 +24,5 @@ public class UserDTO {
     @Size(min = 8, message = "Password should have at least 8 characters.")
     private String password; // Can be blank for Google sign-up
 
-    @JsonProperty("google_id")
     private String googleId; // Can be blank for email/password sign-up
 }
