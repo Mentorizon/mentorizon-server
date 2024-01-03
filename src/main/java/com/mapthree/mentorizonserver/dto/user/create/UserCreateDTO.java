@@ -1,16 +1,18 @@
-package com.mapthree.mentorizonserver.dto;
+package com.mapthree.mentorizonserver.dto.user.create;
 
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
-public class UserDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserCreateDTO {
 
     private UUID id;
 

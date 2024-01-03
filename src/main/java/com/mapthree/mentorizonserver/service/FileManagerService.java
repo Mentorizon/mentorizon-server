@@ -1,8 +1,8 @@
 package com.mapthree.mentorizonserver.service;
 
 import com.amazonaws.util.IOUtils;
-import com.mapthree.mentorizonserver.dto.FileDTO;
-import com.mapthree.mentorizonserver.dto.SavedFileDTO;
+import com.mapthree.mentorizonserver.dto.file.FileDTO;
+import com.mapthree.mentorizonserver.dto.file.SavedFileDTO;
 import com.mapthree.mentorizonserver.utils.AmazonClient;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,9 +22,13 @@ public class Mentor extends User {
     @Column(name = "contact_info")
     private String contactInfo;
 
+    @Column(name = "is_approved")
+    private boolean isApproved;
+
     public Mentor(String name, String email, String jobTitle, String cvName) {
         super(name, email);
         this.jobTitle = jobTitle;
         this.cvName = cvName;
+        this.isApproved = false;
     }
 }

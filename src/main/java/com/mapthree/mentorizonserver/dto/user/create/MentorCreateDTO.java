@@ -1,14 +1,14 @@
-package com.mapthree.mentorizonserver.dto;
+package com.mapthree.mentorizonserver.dto.user.create;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class MentorDTO extends UserDTO {
+public class MentorCreateDTO extends UserCreateDTO {
 
     @NotBlank(message = "Job title is mandatory")
     private String jobTitle;
