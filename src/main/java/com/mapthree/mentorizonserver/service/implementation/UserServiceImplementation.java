@@ -9,9 +9,11 @@ import com.mapthree.mentorizonserver.dto.user.read.MenteeReadDTO;
 import com.mapthree.mentorizonserver.dto.user.read.MentorReadDTO;
 import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
+import com.mapthree.mentorizonserver.model.Domain;
 import com.mapthree.mentorizonserver.model.Mentee;
 import com.mapthree.mentorizonserver.model.Mentor;
 import com.mapthree.mentorizonserver.model.User;
+import com.mapthree.mentorizonserver.repository.DomainRepository;
 import com.mapthree.mentorizonserver.repository.MenteeRepository;
 import com.mapthree.mentorizonserver.repository.MentorRepository;
 import com.mapthree.mentorizonserver.repository.UserRepository;
@@ -20,6 +22,8 @@ import com.mapthree.mentorizonserver.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,13 +32,16 @@ public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
     private final MentorRepository mentorRepository;
     private final MenteeRepository menteeRepository;
+    private final DomainRepository domainRepository;
     private final FileManagerService fileManager;
 
     public UserServiceImplementation(UserRepository userRepository, MentorRepository mentorRepository,
-                                     MenteeRepository menteeRepository, FileManagerService fileManager) {
+                                     MenteeRepository menteeRepository, DomainRepository domainRepository,
+                                     FileManagerService fileManager) {
         this.userRepository = userRepository;
         this.mentorRepository = mentorRepository;
         this.menteeRepository = menteeRepository;
+        this.domainRepository = domainRepository;
         this.fileManager = fileManager;
     }
     // private final PasswordEncoder passwordEncoder;  // TODO: uncomment security dependency and implement password encoding
@@ -67,10 +74,19 @@ public class UserServiceImplementation implements UserService {
 
     private Mentor createNewMentor(MentorCreateDTO dto) {
         String cvName = getCvName(dto);
-        Mentor newMentor = new Mentor(dto.getName(), dto.getEmail(), dto.getJobTitle(), cvName);
+        Mentor newMentor = new Mentor(dto.getName(), dto.getEmail(), dto.getJobTitle(), dto.getDescription(),
+                dto.getYearsOfExperience(), cvName);
         if(dto.getContactInfo() != null)
             newMentor.setContactInfo(dto.getContactInfo());
+
         setSignUpInfo(newMentor, dto);
+
+        Set<Domain> mentorDomains = dto.getDomainIds().stream()
+                .map(domainRepository::findById) // Assuming findById returns Optional<Domain>
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+        newMentor.setDomains(mentorDomains);
 
         return newMentor;
     }
