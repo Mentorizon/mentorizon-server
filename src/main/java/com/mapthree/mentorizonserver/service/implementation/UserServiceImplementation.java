@@ -127,8 +127,13 @@ public class UserServiceImplementation implements UserService {
     }
 
     private MentorReadDTO convertToMentorDTO(Mentor mentor) {
+        Set<String> domainNames = mentor.getDomains().stream()
+                .map(Domain::getName)
+                .collect(Collectors.toSet());
+
         return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getJobTitle(),
-                mentor.getCvName(), mentor.getContactInfo());
+                mentor.getDescription(), mentor.getYearsOfExperience(), domainNames, mentor.getCvName(),
+                mentor.getContactInfo());
     }
 
     @Override
