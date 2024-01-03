@@ -133,7 +133,7 @@ public class UserServiceImplementation implements UserService {
 
         return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getJobTitle(),
                 mentor.getDescription(), mentor.getYearsOfExperience(), domainNames, mentor.getCvName(),
-                mentor.getContactInfo());
+                mentor.getContactInfo(), mentor.getRating());
     }
 
     @Override

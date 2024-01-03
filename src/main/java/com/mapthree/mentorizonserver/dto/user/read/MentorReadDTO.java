@@ -16,9 +16,10 @@ public class MentorReadDTO extends UserReadDTO {
     private Set<String> domains;
     private String cv;
     private String contactInfo;
+    private int rating;
 
     public MentorReadDTO(UUID id, String name, String email, String jobTitle, String description,
-                         int yearsOfExperience, Set<String> domains, String cvName, String contactInfo) {
+                         int yearsOfExperience, Set<String> domains, String cvName, String contactInfo, int rating) {
         super(id, name, email);
         this.jobTitle = jobTitle;
         this.description = description;
@@ -26,5 +27,6 @@ public class MentorReadDTO extends UserReadDTO {
         this.domains = domains;
         this.cv = cvName;
         this.contactInfo = contactInfo;
+        this.rating = rating;
     }
 }
