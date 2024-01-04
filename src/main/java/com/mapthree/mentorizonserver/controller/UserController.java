@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/mentors")
-    public ResponseEntity<String> saveMentee(@Valid @RequestBody MentorCreateDTO mentor) {
+    public ResponseEntity<String> saveMentor(@Valid @RequestBody MentorCreateDTO mentor) {
         userService.saveMentor(mentor);
         return ResponseEntity.ok("Mentor saved successfully.");
     }
