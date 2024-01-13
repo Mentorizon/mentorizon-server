@@ -13,7 +13,7 @@ public interface UserService {
     void saveMentee(MenteeCreateDTO mentee);
     void saveMentor(MentorCreateDTO mentor);
     List<MenteeReadDTO> findAllMentees();
-    List<MentorReadDTO> findAllMentors();
     List<MentorReadDTO> findApprovedMentors();
     List<MentorReadDTO> findNotApprovedMentors();
+    List<MentorReadDTO> findMentorsByCriteria(List<String> domains, Integer yearsOfExperience, Integer rating);
 }

@@ -7,10 +7,7 @@ import com.mapthree.mentorizonserver.dto.user.read.MentorReadDTO;
 import com.mapthree.mentorizonserver.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,8 +39,10 @@ public class UserController {
     }
 
     @GetMapping("/mentors")
-    public ResponseEntity<List<MentorReadDTO>> getMentors() {
-        List<MentorReadDTO> mentorDTOList = userService.findAllMentors();
+    public ResponseEntity<List<MentorReadDTO>> getMentors(@RequestParam(required = false) List<String> domains,
+                                                          @RequestParam(required = false) Integer yearsOfExperience,
+                                                          @RequestParam(required = false) Integer rating) {
+        List<MentorReadDTO> mentorDTOList = userService.findMentorsByCriteria(domains, yearsOfExperience, rating);
         return ResponseEntity.ok(mentorDTOList);
     }
 

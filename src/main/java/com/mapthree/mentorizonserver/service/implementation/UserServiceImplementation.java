@@ -19,11 +19,11 @@ import com.mapthree.mentorizonserver.repository.MentorRepository;
 import com.mapthree.mentorizonserver.repository.UserRepository;
 import com.mapthree.mentorizonserver.service.FileManagerService;
 import com.mapthree.mentorizonserver.service.UserService;
+import com.mapthree.mentorizonserver.specification.MentorSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -118,14 +118,6 @@ public class UserServiceImplementation implements UserService {
         return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail());
     }
 
-    @Override
-    public List<MentorReadDTO> findAllMentors() {
-        List<Mentor> mentors = mentorRepository.findAll();
-        return mentors.stream()
-                .map(this::convertToMentorDTO)
-                .collect(Collectors.toList());
-    }
-
     private MentorReadDTO convertToMentorDTO(Mentor mentor) {
         Set<String> domainNames = mentor.getDomains().stream()
                 .map(Domain::getName)
@@ -147,6 +139,27 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<MentorReadDTO> findNotApprovedMentors() {
         List<Mentor> mentors = mentorRepository.findByIsApproved(false);
+        return mentors.stream()
+                .map(this::convertToMentorDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MentorReadDTO> findMentorsByCriteria(List<String> domains, Integer yearsOfExperience, Integer rating) {
+        Specification<Mentor> spec = Specification.where(MentorSpecification.isApproved());
+
+        if (domains != null)
+            for (String domainId : domains)
+                spec = spec.and(MentorSpecification.hasDomain(UUID.fromString(domainId)));
+
+        if (yearsOfExperience != null)
+            spec = spec.and(MentorSpecification.hasYearsOfExperience(yearsOfExperience));
+
+        if (rating != null)
+            spec = spec.and(MentorSpecification.hasRating(rating));
+
+        List<Mentor> mentors = mentorRepository.findAll(spec);
+
         return mentors.stream()
                 .map(this::convertToMentorDTO)
                 .collect(Collectors.toList());
