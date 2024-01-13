@@ -59,7 +59,6 @@ public class UserServiceImplementation implements UserService {
     private Mentee createNewMentee(MenteeCreateDTO dto) {
         Mentee newMentee = new Mentee(dto.getName(), dto.getEmail());
         setSignUpInfo(newMentee, dto);
-
         return newMentee;
     }
 
@@ -82,7 +81,7 @@ public class UserServiceImplementation implements UserService {
         setSignUpInfo(newMentor, dto);
 
         Set<Domain> mentorDomains = dto.getDomainIds().stream()
-                .map(domainRepository::findById) // Assuming findById returns Optional<Domain>
+                .map(domainRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
@@ -109,39 +108,19 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<MenteeReadDTO> findAllMentees() {
         List<Mentee> mentees = menteeRepository.findAll();
-        return mentees.stream()
-                .map(this::convertToMenteeDTO)
-                .collect(Collectors.toList());
-    }
-
-    private MenteeReadDTO convertToMenteeDTO(Mentee mentee) {
-        return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail());
-    }
-
-    private MentorReadDTO convertToMentorDTO(Mentor mentor) {
-        Set<String> domainNames = mentor.getDomains().stream()
-                .map(Domain::getName)
-                .collect(Collectors.toSet());
-
-        return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getJobTitle(),
-                mentor.getDescription(), mentor.getYearsOfExperience(), domainNames, mentor.getCvName(),
-                mentor.getContactInfo(), mentor.getRating());
+        return convertToMenteeDTOList(mentees);
     }
 
     @Override
     public List<MentorReadDTO> findApprovedMentors() {
         List<Mentor> mentors = mentorRepository.findByIsApproved(true);
-        return mentors.stream()                         // TODO: refactor: extract
-                .map(this::convertToMentorDTO)
-                .collect(Collectors.toList());
+        return convertToMentorDTOList(mentors);
     }
 
     @Override
     public List<MentorReadDTO> findNotApprovedMentors() {
         List<Mentor> mentors = mentorRepository.findByIsApproved(false);
-        return mentors.stream()
-                .map(this::convertToMentorDTO)
-                .collect(Collectors.toList());
+        return convertToMentorDTOList(mentors);
     }
 
     @Override
@@ -160,9 +139,33 @@ public class UserServiceImplementation implements UserService {
 
         List<Mentor> mentors = mentorRepository.findAll(spec);
 
+        return convertToMentorDTOList(mentors);
+    }
+
+    private List<MenteeReadDTO> convertToMenteeDTOList(List<Mentee> mentees) {
+        return mentees.stream()
+                .map(this::convertToMenteeDTO)
+                .collect(Collectors.toList());
+    }
+
+    private MenteeReadDTO convertToMenteeDTO(Mentee mentee) {
+        return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail());
+    }
+
+    private List<MentorReadDTO> convertToMentorDTOList(List<Mentor> mentors) {
         return mentors.stream()
                 .map(this::convertToMentorDTO)
                 .collect(Collectors.toList());
+    }
+
+    private MentorReadDTO convertToMentorDTO(Mentor mentor) {
+        Set<String> domainNames = mentor.getDomains().stream()
+                .map(Domain::getName)
+                .collect(Collectors.toSet());
+
+        return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getJobTitle(),
+                mentor.getDescription(), mentor.getYearsOfExperience(), domainNames, mentor.getCvName(),
+                mentor.getContactInfo(), mentor.getRating());
     }
 
 }
