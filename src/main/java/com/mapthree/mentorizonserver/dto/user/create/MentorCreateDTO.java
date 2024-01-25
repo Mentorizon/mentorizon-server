@@ -1,9 +1,6 @@
 package com.mapthree.mentorizonserver.dto.user.create;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.List;
@@ -27,6 +24,7 @@ public class MentorCreateDTO extends UserCreateDTO {
     @NotBlank(message = "Description is mandatory")
     private String description;
 
+    @NotNull(message = "Years of experience is required")
     @Min(value = 0, message = "Years of experience cannot be less than 0")
     @Max(value = 50, message = "Years of experience cannot be more than 50")
     private int yearsOfExperience;

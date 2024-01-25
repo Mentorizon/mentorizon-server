@@ -1,17 +1,22 @@
 package com.mapthree.mentorizonserver.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
-@DiscriminatorValue("MENTOR")
+@Table(name = "mentor_details")
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mentor extends User {
+public class MentorDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "job_title")
     private String jobTitle;
@@ -41,14 +46,4 @@ public class Mentor extends User {
 
     @Column(name = "is_approved")
     private boolean isApproved;
-
-    public Mentor(String name, String email, String jobTitle, String description, int yearsOfExperience, String cvName) {
-        super(name, email);
-        this.jobTitle = jobTitle;
-        this.description = description;
-        this.yearsOfExperience = yearsOfExperience;
-        this.cvName = cvName;
-        this.isApproved = false;
-        this.rating = 5;
-    }
 }

@@ -9,13 +9,10 @@ import com.mapthree.mentorizonserver.dto.user.read.MenteeReadDTO;
 import com.mapthree.mentorizonserver.dto.user.read.MentorReadDTO;
 import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
-import com.mapthree.mentorizonserver.model.Domain;
-import com.mapthree.mentorizonserver.model.Mentee;
-import com.mapthree.mentorizonserver.model.Mentor;
-import com.mapthree.mentorizonserver.model.User;
+import com.mapthree.mentorizonserver.model.*;
 import com.mapthree.mentorizonserver.repository.DomainRepository;
-import com.mapthree.mentorizonserver.repository.MenteeRepository;
-import com.mapthree.mentorizonserver.repository.MentorRepository;
+import com.mapthree.mentorizonserver.repository.MentorDetailsRepository;
+import com.mapthree.mentorizonserver.repository.RoleRepository;
 import com.mapthree.mentorizonserver.repository.UserRepository;
 import com.mapthree.mentorizonserver.service.FileManagerService;
 import com.mapthree.mentorizonserver.service.UserService;
@@ -30,64 +27,87 @@ import java.util.stream.Collectors;
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
-    private final MentorRepository mentorRepository;
-    private final MenteeRepository menteeRepository;
     private final DomainRepository domainRepository;
     private final FileManagerService fileManager;
+    private final RoleRepository roleRepository;
+    private final MentorDetailsRepository mentorDetailsRepository;
 
-    public UserServiceImplementation(UserRepository userRepository, MentorRepository mentorRepository,
-                                     MenteeRepository menteeRepository, DomainRepository domainRepository,
-                                     FileManagerService fileManager) {
+    public UserServiceImplementation(UserRepository userRepository, DomainRepository domainRepository,
+                                     FileManagerService fileManager, RoleRepository roleRepository, MentorDetailsRepository mentorDetailsRepository) {
         this.userRepository = userRepository;
-        this.mentorRepository = mentorRepository;
-        this.menteeRepository = menteeRepository;
         this.domainRepository = domainRepository;
         this.fileManager = fileManager;
+        this.roleRepository = roleRepository;
+        this.mentorDetailsRepository = mentorDetailsRepository;
     }
     // private final PasswordEncoder passwordEncoder;  // TODO: uncomment security dependency and implement password encoding
 
 
     @Override
-    public void saveMentee(MenteeCreateDTO mentee) {
-        if(userRepository.findByEmail(mentee.getEmail()).isPresent())
-            throw new EmailInUseException("User with this email already exists.");
-
-        Mentee newMentee = createNewMentee(mentee);
+    public void saveMentee(MenteeCreateDTO dto) {
+        checkIfUserExists(dto.getEmail());
+        User newMentee = createNewMentee(dto);
         userRepository.save(newMentee);
     }
 
-    private Mentee createNewMentee(MenteeCreateDTO dto) {
-        Mentee newMentee = new Mentee(dto.getName(), dto.getEmail());
+    private User createNewMentee(MenteeCreateDTO dto) {
+        Role menteeRole = roleRepository.findById(RoleName.ROLE_MENTEE)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+
+        User newMentee = new User(dto.getName(), dto.getEmail(), Collections.singleton(menteeRole));
         setSignUpInfo(newMentee, dto);
+
         return newMentee;
     }
 
-    @Override
-    public void saveMentor(MentorCreateDTO mentor) {
-        if(userRepository.findByEmail(mentor.getEmail()).isPresent())
+    private void checkIfUserExists(String email) {
+        if(userRepository.findByEmail(email).isPresent())
             throw new EmailInUseException("User with this email already exists.");
+    }
 
-        Mentor newMentor = createNewMentor(mentor);
+    @Override
+    public void saveMentor(MentorCreateDTO dto) {
+        checkIfUserExists(dto.getEmail());
+
+        MentorDetails newMentorDetails = createNewMentorDetails(dto);
+        mentorDetailsRepository.save(newMentorDetails);
+
+        User newMentor = createNewMentor(dto);
+        newMentor.setMentorDetails(newMentorDetails);
         userRepository.save(newMentor);
     }
 
-    private Mentor createNewMentor(MentorCreateDTO dto) {
-        String cvName = getCvName(dto);
-        Mentor newMentor = new Mentor(dto.getName(), dto.getEmail(), dto.getJobTitle(), dto.getDescription(),
-                dto.getYearsOfExperience(), cvName);
-        if(dto.getContactInfo() != null)
-            newMentor.setContactInfo(dto.getContactInfo());
+    private User createNewMentor(MentorCreateDTO dto) {
+        Role mentorRole = roleRepository.findById(RoleName.ROLE_MENTOR)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
+        User newMentor = new User(dto.getName(), dto.getEmail(), Collections.singleton(mentorRole));
         setSignUpInfo(newMentor, dto);
+
+        return newMentor;
+    }
+
+    private MentorDetails createNewMentorDetails(MentorCreateDTO dto) {
+        MentorDetails mentorDetails = new MentorDetails();
+        mentorDetails.setJobTitle(dto.getJobTitle());
+
+        String cvName = getCvName(dto);
+        mentorDetails.setCvName(cvName);
+
+        if(dto.getContactInfo() != null)
+            mentorDetails.setContactInfo(dto.getContactInfo());
+
+        mentorDetails.setDescription(dto.getDescription());
+        mentorDetails.setYearsOfExperience(dto.getYearsOfExperience());
 
         Set<Domain> mentorDomains = dto.getDomainIds().stream()
                 .map(domainRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
-        newMentor.setDomains(mentorDomains);
+        mentorDetails.setDomains(mentorDomains);
 
-        return newMentor;
+        return mentorDetails;
     }
 
     private String getCvName(MentorCreateDTO mentor) {
@@ -107,65 +127,69 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public List<MenteeReadDTO> findAllMentees() {
-        List<Mentee> mentees = menteeRepository.findAll();
+        List<User> mentees = userRepository.findByRole(RoleName.ROLE_MENTEE);
         return convertToMenteeDTOList(mentees);
     }
 
     @Override
     public List<MentorReadDTO> findApprovedMentors() {
-        List<Mentor> mentors = mentorRepository.findByIsApproved(true);
+        List<User> mentors = userRepository.findMentorsByApproved(true);
         return convertToMentorDTOList(mentors);
     }
 
     @Override
     public List<MentorReadDTO> findNotApprovedMentors() {
-        List<Mentor> mentors = mentorRepository.findByIsApproved(false);
+        List<User> mentors = userRepository.findMentorsByApproved(false);
         return convertToMentorDTOList(mentors);
     }
 
     @Override
     public List<MentorReadDTO> findMentorsByCriteria(List<String> domains, Integer yearsOfExperience, Integer rating) {
-        Specification<Mentor> spec = Specification.where(MentorSpecification.isApproved());
+        Specification<User> spec = Specification.where(MentorSpecification.isApproved());
 
-        if (domains != null)
-            for (String domainId : domains)
+        if (domains != null) {
+            for (String domainId : domains) {
                 spec = spec.and(MentorSpecification.hasDomain(UUID.fromString(domainId)));
+            }
+        }
 
-        if (yearsOfExperience != null)
+        if (yearsOfExperience != null) {
             spec = spec.and(MentorSpecification.hasYearsOfExperience(yearsOfExperience));
+        }
 
-        if (rating != null)
+        if (rating != null) {
             spec = spec.and(MentorSpecification.hasRating(rating));
+        }
 
-        List<Mentor> mentors = mentorRepository.findAll(spec);
-
-        return convertToMentorDTOList(mentors);
+        List<User> mentorUsers = userRepository.findAll(spec);
+        return convertToMentorDTOList(mentorUsers);
     }
 
-    private List<MenteeReadDTO> convertToMenteeDTOList(List<Mentee> mentees) {
+    private List<MenteeReadDTO> convertToMenteeDTOList(List<User> mentees) {
         return mentees.stream()
                 .map(this::convertToMenteeDTO)
                 .collect(Collectors.toList());
     }
 
-    private MenteeReadDTO convertToMenteeDTO(Mentee mentee) {
+    private MenteeReadDTO convertToMenteeDTO(User mentee) {
         return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail());
     }
 
-    private List<MentorReadDTO> convertToMentorDTOList(List<Mentor> mentors) {
+    private List<MentorReadDTO> convertToMentorDTOList(List<User> mentors) {
         return mentors.stream()
                 .map(this::convertToMentorDTO)
                 .collect(Collectors.toList());
     }
 
-    private MentorReadDTO convertToMentorDTO(Mentor mentor) {
-        Set<String> domainNames = mentor.getDomains().stream()
+    private MentorReadDTO convertToMentorDTO(User mentor) {
+        MentorDetails mentorDetails = mentor.getMentorDetails();
+        Set<String> domainNames = mentorDetails.getDomains().stream()
                 .map(Domain::getName)
                 .collect(Collectors.toSet());
 
-        return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getJobTitle(),
-                mentor.getDescription(), mentor.getYearsOfExperience(), domainNames, mentor.getCvName(),
-                mentor.getContactInfo(), mentor.getRating());
+        return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentorDetails.getJobTitle(),
+                mentorDetails.getDescription(), mentorDetails.getYearsOfExperience(), domainNames,
+                mentorDetails.getCvName(), mentorDetails.getContactInfo(), mentorDetails.getRating());
     }
 
 }
