@@ -25,14 +25,18 @@ public class MentorshipApplicationController {
         return ResponseEntity.ok(applicationService.submitApplication(application));
     }
 
-    @GetMapping("/mentee/{menteeId}")
-    public ResponseEntity<List<MentorshipApplication>> getApplicationsForMentee(@PathVariable UUID menteeId) {
-        return ResponseEntity.ok(applicationService.getApplicationsForMentee(menteeId));
-    }
-
-    @GetMapping("/mentor/{mentorId}")
-    public ResponseEntity<List<MentorshipApplication>> getApplicationsForMentor(@PathVariable UUID mentorId) {
-        return ResponseEntity.ok(applicationService.getApplicationsForMentor(mentorId));
+    @GetMapping
+    public ResponseEntity<List<MentorshipApplication>> getApplications(
+            @RequestParam(required = false) UUID mentorId,
+            @RequestParam(required = false) UUID menteeId)
+    {
+        if (mentorId == null && menteeId == null) {     // TODO: ensure the current user is admin
+            return ResponseEntity.ok(applicationService.getAllApplications());
+        } else if (mentorId != null) {
+            return ResponseEntity.ok(applicationService.getApplicationsForMentor(mentorId));
+        } else {
+            return ResponseEntity.ok(applicationService.getApplicationsForMentee(menteeId));
+        }
     }
 
     @PutMapping("/{applicationId}/status")

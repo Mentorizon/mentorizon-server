@@ -11,6 +11,7 @@ import java.util.UUID;
 @Service
 public interface MentorshipApplicationService {
     MentorshipApplication submitApplication(MentorshipApplicationCreateDTO application);
+    List<MentorshipApplication> getAllApplications();
     List<MentorshipApplication> getApplicationsForMentee(UUID menteeId);
     List<MentorshipApplication> getApplicationsForMentor(UUID mentorId);
     MentorshipApplication updateApplicationStatus(UUID applicationId, ApplicationStatus status);

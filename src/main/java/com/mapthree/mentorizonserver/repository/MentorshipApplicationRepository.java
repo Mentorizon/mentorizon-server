@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface MentorshipApplicationRepository extends JpaRepository<MentorshipApplication, UUID> {
+    List<MentorshipApplication> findAll();
     List<MentorshipApplication> findByMenteeId(UUID menteeId);
     List<MentorshipApplication> findByMentorId(UUID mentorId);
     List<MentorshipApplication> findByMenteeIdAndMentorIdAndStatusNot(UUID menteeId, UUID mentorId, ApplicationStatus applicationStatus);

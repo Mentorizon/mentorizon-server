@@ -67,6 +67,11 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
     }
 
     @Override
+    public List<MentorshipApplication> getAllApplications() {
+        return repository.findAll();
+    }
+
+    @Override
     public List<MentorshipApplication> getApplicationsForMentee(UUID menteeId) {
         return repository.findByMenteeId(menteeId);
     }
