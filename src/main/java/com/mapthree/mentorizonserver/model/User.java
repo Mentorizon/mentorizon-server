@@ -5,7 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_data")
@@ -13,12 +20,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID id;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "mentor_details_id")
+    private MentorDetails mentorDetails;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name")
+    )
+    private Set<Role> roles;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -32,21 +51,46 @@ public class User {
     @Column(name = "google_id", unique = true)
     private String googleId;
 
-    @Column(name = "is_mentor", nullable = false)
-    private boolean isMentor;
+    public User(String name, String email, Set<Role> roles) {
+        this.name = name;
+        this.email = email;
+        this.roles = roles;
+    }
 
-    @Column(name = "is_approved")
-    private boolean isApproved;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toSet());
+    }
 
-    @Column(name = "is_mentee", nullable = false)
-    private boolean isMentee;
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
-    @Column(name = "job_title")
-    private String jobTitle;
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
-    @Column(name = "cv_name", unique = true)
-    private String cvName;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-    @Column(name = "contact_info")
-    private String contactInfo;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

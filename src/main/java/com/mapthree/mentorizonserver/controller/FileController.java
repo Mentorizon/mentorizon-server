@@ -1,7 +1,7 @@
 package com.mapthree.mentorizonserver.controller;
 
-import com.mapthree.mentorizonserver.dto.FileDTO;
-import com.mapthree.mentorizonserver.dto.SavedFileDTO;
+import com.mapthree.mentorizonserver.dto.file.FileDTO;
+import com.mapthree.mentorizonserver.dto.file.SavedFileDTO;
 import com.mapthree.mentorizonserver.service.FileManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;

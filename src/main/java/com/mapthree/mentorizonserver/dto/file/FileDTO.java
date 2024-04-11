@@ -1,4 +1,4 @@
-package com.mapthree.mentorizonserver.dto;
+package com.mapthree.mentorizonserver.dto.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -16,3 +16,5 @@ amazonProperties:
   accessKey: ${AMAZON_ACCESS_KEY}
   secretKey: ${AMAZON_SECRET_KEY}
   bucketName: ${AMAZON_BUCKET_NAME}
+
+  
