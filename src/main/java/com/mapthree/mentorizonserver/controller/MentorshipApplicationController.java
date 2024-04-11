@@ -46,4 +46,10 @@ public class MentorshipApplicationController {
         return ResponseEntity.ok(applicationService.updateApplicationStatus(applicationId, status.getStatus()));
     }
 
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<Void> deleteApplication(@PathVariable UUID applicationId) {
+        applicationService.deleteApplication(applicationId);
+        return ResponseEntity.ok().build();
+    }
+
 }

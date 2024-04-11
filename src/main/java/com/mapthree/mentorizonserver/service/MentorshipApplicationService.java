@@ -15,4 +15,5 @@ public interface MentorshipApplicationService {
     List<MentorshipApplication> getApplicationsForMentee(UUID menteeId);
     List<MentorshipApplication> getApplicationsForMentor(UUID mentorId);
     MentorshipApplication updateApplicationStatus(UUID applicationId, ApplicationStatus status);
+    void deleteApplication(UUID applicationId);
 }

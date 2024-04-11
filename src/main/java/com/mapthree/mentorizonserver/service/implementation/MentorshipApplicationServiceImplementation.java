@@ -89,4 +89,12 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
         return repository.save(application);
     }
 
+    @Override
+    public void deleteApplication(UUID applicationId) {
+        if (!repository.existsById(applicationId)) {
+            throw new MentorshipApplicationNotFoundException("Mentorship Application not found!");
+        }
+        repository.deleteById(applicationId);
+    }
+
 }
