@@ -1,11 +1,8 @@
 package com.mapthree.mentorizonserver.controller;
 
-import com.mapthree.mentorizonserver.dto.user.create.MenteeCreateDTO;
-import com.mapthree.mentorizonserver.dto.user.create.MentorCreateDTO;
 import com.mapthree.mentorizonserver.dto.user.read.MenteeReadDTO;
 import com.mapthree.mentorizonserver.dto.user.read.MentorReadDTO;
 import com.mapthree.mentorizonserver.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,18 +15,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/mentees")
-    public ResponseEntity<String> saveMentee(@Valid @RequestBody MenteeCreateDTO mentee) {
-        userService.saveMentee(mentee);
-        return ResponseEntity.ok("Mentee saved successfully.");
-    }
-
-    @PostMapping("/mentors")
-    public ResponseEntity<String> saveMentor(@Valid @RequestBody MentorCreateDTO mentor) {
-        userService.saveMentor(mentor);
-        return ResponseEntity.ok("Mentor saved successfully.");
     }
 
     @GetMapping("/mentees")

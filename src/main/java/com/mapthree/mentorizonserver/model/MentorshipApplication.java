@@ -58,5 +58,6 @@ public class MentorshipApplication {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private ApplicationStatus status = ApplicationStatus.PENDING;
 }
