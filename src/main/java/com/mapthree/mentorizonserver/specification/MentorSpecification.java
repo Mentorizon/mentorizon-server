@@ -41,4 +41,13 @@ public class MentorSpecification {
             return criteriaBuilder.isTrue(root.get("mentorDetails").get("isApproved"));
         };
     }
+
+    public static Specification<User> isNotApproved() {
+        return (root, query, criteriaBuilder) -> {
+            if (root.get("mentorDetails") == null)
+                return criteriaBuilder.disjunction();
+            return criteriaBuilder.isFalse(root.get("mentorDetails").get("isApproved"));
+        };
+    }
+
 }
