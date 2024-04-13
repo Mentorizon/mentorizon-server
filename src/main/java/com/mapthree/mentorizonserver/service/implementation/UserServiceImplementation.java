@@ -62,7 +62,7 @@ public class UserServiceImplementation implements UserService {
             spec = spec.and(MentorSpecification.hasRating(rating));
         }
 
-        List<User> mentorUsers = userRepository.findAll(spec, Sort.by(Sort.Direction.ASC, sortBy));
+        List<User> mentorUsers = userRepository.findAll(spec, Sort.by(Sort.Direction.DESC, sortBy));
         return convertToMentorDTOList(mentorUsers);
     }
 
