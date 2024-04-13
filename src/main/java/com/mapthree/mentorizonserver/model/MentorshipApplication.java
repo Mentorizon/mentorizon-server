@@ -56,7 +56,6 @@ public class MentorshipApplication {
     @Column(name = "goal", length = 500)
     private String goal;
 
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @Builder.Default

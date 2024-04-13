@@ -4,6 +4,7 @@ package com.mapthree.mentorizonserver.dto.user.read;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,10 +18,12 @@ public class MentorReadDTO extends UserReadDTO {
     private String cv;
     private String contactInfo;
     private int rating;
+    private boolean isApproved;
 
-    public MentorReadDTO(UUID id, String name, String email, String jobTitle, String description,
-                         int yearsOfExperience, Set<String> domains, String cvName, String contactInfo, int rating) {
-        super(id, name, email);
+    public MentorReadDTO(UUID id, String name, String email, LocalDateTime createdAt, String jobTitle, String description,
+                         int yearsOfExperience, Set<String> domains, String cvName, String contactInfo, int rating,
+                         boolean isApproved) {
+        super(id, name, email, createdAt);
         this.jobTitle = jobTitle;
         this.description = description;
         this.yearsOfExperience = yearsOfExperience;
@@ -28,5 +31,6 @@ public class MentorReadDTO extends UserReadDTO {
         this.cv = cvName;
         this.contactInfo = contactInfo;
         this.rating = rating;
+        this.isApproved = isApproved;
     }
 }
