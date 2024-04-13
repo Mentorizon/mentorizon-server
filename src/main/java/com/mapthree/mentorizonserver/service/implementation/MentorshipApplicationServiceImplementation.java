@@ -14,6 +14,7 @@ import com.mapthree.mentorizonserver.service.MentorshipApplicationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -69,6 +70,11 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
     @Override
     public List<MentorshipApplication> getAllApplications() {
         return repository.findAll();
+    }
+
+    @Override
+    public Optional<MentorshipApplication> getApplicationById(UUID applicationId) {
+        return repository.findById(applicationId);
     }
 
     @Override

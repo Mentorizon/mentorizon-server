@@ -39,6 +39,13 @@ public class MentorshipApplicationController {
         }
     }
 
+    @GetMapping("/{applicationId}")
+    public ResponseEntity<MentorshipApplication> getApplicationById(@PathVariable UUID applicationId) {
+        return applicationService.getApplicationById(applicationId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{applicationId}/status")
     public ResponseEntity<MentorshipApplication> updateApplicationStatus(
             @PathVariable UUID applicationId,

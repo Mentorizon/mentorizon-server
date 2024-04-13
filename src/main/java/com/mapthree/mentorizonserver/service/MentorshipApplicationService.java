@@ -6,12 +6,14 @@ import com.mapthree.mentorizonserver.model.MentorshipApplication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public interface MentorshipApplicationService {
     MentorshipApplication submitApplication(MentorshipApplicationCreateDTO application);
     List<MentorshipApplication> getAllApplications();
+    Optional<MentorshipApplication> getApplicationById(UUID applicationId);
     List<MentorshipApplication> getApplicationsForMentee(UUID menteeId);
     List<MentorshipApplication> getApplicationsForMentor(UUID mentorId);
     MentorshipApplication updateApplicationStatus(UUID applicationId, ApplicationStatus status);
