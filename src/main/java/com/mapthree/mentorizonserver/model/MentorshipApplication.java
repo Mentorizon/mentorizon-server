@@ -41,20 +41,21 @@ public class MentorshipApplication {
     @JoinColumn(name = "mentor_id")
     private User mentor;
 
-    @Column(name = "reason")
+    @Column(name = "reason", length = 500)
     private String reason;
 
-    @Column(name = "motivation")
+    @Column(name = "motivation", length = 1000)
     private String motivation;
 
-    @Column(name = "self_description")
+    @Column(name = "self_description", length = 1000)
     private String selfDescription;
 
-    @Column(name = "current_skills")
+    @Column(name = "current_skills", length = 500)
     private String currentSkills;
 
-    @Column(name = "goal")
+    @Column(name = "goal", length = 500)
     private String goal;
+
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

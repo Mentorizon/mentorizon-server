@@ -39,11 +39,24 @@ public class MentorshipApplicationController {
         }
     }
 
+    @GetMapping("/{applicationId}")
+    public ResponseEntity<MentorshipApplication> getApplicationById(@PathVariable UUID applicationId) {
+        return applicationService.getApplicationById(applicationId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{applicationId}/status")
     public ResponseEntity<MentorshipApplication> updateApplicationStatus(
             @PathVariable UUID applicationId,
             @RequestBody MentorshipApplicationStatusUpdateDTO status) {
         return ResponseEntity.ok(applicationService.updateApplicationStatus(applicationId, status.getStatus()));
+    }
+
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<Void> deleteApplication(@PathVariable UUID applicationId) {
+        applicationService.deleteApplication(applicationId);
+        return ResponseEntity.ok().build();
     }
 
 }

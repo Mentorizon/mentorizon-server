@@ -14,6 +14,7 @@ import com.mapthree.mentorizonserver.service.MentorshipApplicationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -72,6 +73,11 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
     }
 
     @Override
+    public Optional<MentorshipApplication> getApplicationById(UUID applicationId) {
+        return repository.findById(applicationId);
+    }
+
+    @Override
     public List<MentorshipApplication> getApplicationsForMentee(UUID menteeId) {
         return repository.findByMenteeId(menteeId);
     }
@@ -87,6 +93,14 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
                 .orElseThrow(() -> new MentorshipApplicationNotFoundException("Mentorship Application not found"));
         application.setStatus(status);
         return repository.save(application);
+    }
+
+    @Override
+    public void deleteApplication(UUID applicationId) {
+        if (!repository.existsById(applicationId)) {
+            throw new MentorshipApplicationNotFoundException("Mentorship Application not found!");
+        }
+        repository.deleteById(applicationId);
     }
 
 }
