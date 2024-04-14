@@ -27,8 +27,9 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public List<MenteeReadDTO> findAllMentees() {
-        List<User> mentees = userRepository.findByRole(RoleName.ROLE_MENTEE);
+    public List<MenteeReadDTO> findAllMentees(String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        List<User> mentees = userRepository.findByRole(RoleName.ROLE_MENTEE, sort);
         return convertToMenteeDTOList(mentees);
     }
 

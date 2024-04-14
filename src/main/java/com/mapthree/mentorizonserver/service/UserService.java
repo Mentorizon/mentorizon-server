@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Service
 public interface UserService {
-    List<MenteeReadDTO> findAllMentees();
+    List<MenteeReadDTO> findAllMentees(String sortBy);
     List<MentorReadDTO> findMentorsByCriteria(Boolean approved,
                                               List<String> domains,
                                               Integer yearsOfExperience,

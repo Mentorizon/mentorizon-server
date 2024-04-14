@@ -2,6 +2,7 @@ package com.mapthree.mentorizonserver.repository;
 
 import com.mapthree.mentorizonserver.model.RoleName;
 import com.mapthree.mentorizonserver.model.User;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,9 +18,7 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
-    List<User> findByRole(@Param("roleName") RoleName roleName);
+    List<User> findByRole(@Param("roleName") RoleName roleName, Sort sort);
 
-    @Query("SELECT u FROM User u WHERE u.mentorDetails.isApproved = :approved")
-    List<User> findMentorsByApproved(@Param("approved") boolean approved);
 
 }

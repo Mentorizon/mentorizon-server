@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/mentees")
-    public ResponseEntity<List<MenteeReadDTO>> getMentees() {
-        List<MenteeReadDTO> menteeDTOList = userService.findAllMentees();
+    public ResponseEntity<List<MenteeReadDTO>> getMentees(@RequestParam(defaultValue = "createdAt") String sortBy) {
+        List<MenteeReadDTO> menteeDTOList = userService.findAllMentees(sortBy);
         return ResponseEntity.ok(menteeDTOList);
     }
 
