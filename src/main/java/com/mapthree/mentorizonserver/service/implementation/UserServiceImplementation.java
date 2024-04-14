@@ -41,7 +41,7 @@ public class UserServiceImplementation implements UserService {
             Integer rating,
             String sortBy)
     {
-        Specification<User> spec = Specification.where(null);
+        Specification<User> spec = MentorSpecification.isMentor();
 
         if (approved != null && approved) {
             spec = spec.and(MentorSpecification.isApproved());
