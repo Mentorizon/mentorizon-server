@@ -5,6 +5,7 @@ import com.mapthree.mentorizonserver.dto.user.read.MentorReadDTO;
 import com.mapthree.mentorizonserver.exception.UserNotFoundException;
 import com.mapthree.mentorizonserver.model.*;
 import com.mapthree.mentorizonserver.repository.MentorDetailsRepository;
+import com.mapthree.mentorizonserver.repository.RatingRepository;
 import com.mapthree.mentorizonserver.repository.UserRepository;
 import com.mapthree.mentorizonserver.service.UserService;
 import com.mapthree.mentorizonserver.specification.MentorSpecification;
@@ -20,10 +21,16 @@ public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
     private final MentorDetailsRepository mentorDetailsRepository;
+    private final RatingRepository ratingRepository;
 
-    public UserServiceImplementation(UserRepository userRepository, MentorDetailsRepository mentorDetailsRepository) {
+    public UserServiceImplementation(
+            UserRepository userRepository,
+            MentorDetailsRepository mentorDetailsRepository,
+            RatingRepository ratingRepository)
+    {
         this.userRepository = userRepository;
         this.mentorDetailsRepository = mentorDetailsRepository;
+        this.ratingRepository = ratingRepository;
     }
 
     @Override
@@ -101,10 +108,12 @@ public class UserServiceImplementation implements UserService {
                 .map(Domain::getName)
                 .collect(Collectors.toSet());
 
+        int ratingsNumber = ratingRepository.countByMentorId(mentor.getId());
+
         return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getCreatedAt(),
                 mentorDetails.getJobTitle(), mentorDetails.getDescription(), mentorDetails.getYearsOfExperience(),
                 domainNames, mentorDetails.getCvName(), mentorDetails.getContactInfo(), mentorDetails.getRating(),
-                mentorDetails.isApproved());
+                ratingsNumber, mentorDetails.isApproved());
     }
 
 }

@@ -42,7 +42,7 @@ public class MentorDetails {
     private Set<Domain> domains;
 
     @Column(name = "rating")
-    private int rating;
+    private double rating;
 
     @Column(name = "is_approved")
     private boolean isApproved;
