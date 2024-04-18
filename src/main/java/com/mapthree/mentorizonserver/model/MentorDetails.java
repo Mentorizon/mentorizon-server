@@ -27,7 +27,7 @@ public class MentorDetails {
     @Column(name = "contact_info")
     private String contactInfo;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "years_of_experience")
@@ -42,7 +42,7 @@ public class MentorDetails {
     private Set<Domain> domains;
 
     @Column(name = "rating")
-    private int rating;
+    private double rating;
 
     @Column(name = "is_approved")
     private boolean isApproved;

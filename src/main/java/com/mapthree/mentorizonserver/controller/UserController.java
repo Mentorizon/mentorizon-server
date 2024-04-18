@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class UserController {
@@ -18,28 +19,31 @@ public class UserController {
     }
 
     @GetMapping("/mentees")
-    public ResponseEntity<List<MenteeReadDTO>> getMentees() {
-        List<MenteeReadDTO> menteeDTOList = userService.findAllMentees();
+    public ResponseEntity<List<MenteeReadDTO>> getMentees(@RequestParam(defaultValue = "createdAt") String sortBy) {
+        List<MenteeReadDTO> menteeDTOList = userService.findAllMentees(sortBy);
         return ResponseEntity.ok(menteeDTOList);
     }
 
     @GetMapping("/mentors")
-    public ResponseEntity<List<MentorReadDTO>> getMentors(@RequestParam(required = false) List<String> domains,
+    public ResponseEntity<List<MentorReadDTO>> getMentors(@RequestParam(required = false) Boolean approved,
+                                                          @RequestParam(required = false) List<String> domains,
                                                           @RequestParam(required = false) Integer yearsOfExperience,
-                                                          @RequestParam(required = false) Integer rating) {
-        List<MentorReadDTO> mentorDTOList = userService.findMentorsByCriteria(domains, yearsOfExperience, rating);
+                                                          @RequestParam(required = false) Integer rating,
+                                                          @RequestParam(defaultValue = "createdAt") String sortBy) {
+        List<MentorReadDTO> mentorDTOList = userService.findMentorsByCriteria(approved, domains, yearsOfExperience, rating, sortBy);
         return ResponseEntity.ok(mentorDTOList);
     }
 
-    @GetMapping("/mentors/approved")
-    public ResponseEntity<List<MentorReadDTO>> getApprovedMentors() {
-        List<MentorReadDTO> mentorDTOList = userService.findApprovedMentors();
-        return ResponseEntity.ok(mentorDTOList);
+    @GetMapping("/mentors/{mentorId}")
+    public ResponseEntity<MentorReadDTO> getMentorById(@PathVariable UUID mentorId) {
+        MentorReadDTO mentorDTO = userService.findMentorById(mentorId);
+        return ResponseEntity.ok(mentorDTO);
     }
 
-    @GetMapping("/mentors/not-approved")
-    public ResponseEntity<List<MentorReadDTO>> getNotApprovedMentors() {
-        List<MentorReadDTO> mentorDTOList = userService.findNotApprovedMentors();
-        return ResponseEntity.ok(mentorDTOList);
+    @PutMapping("/mentors/{mentorId}/approve")
+    public ResponseEntity<?> approveMentor(@PathVariable UUID mentorId) {
+        userService.approveMentor(mentorId);
+        return ResponseEntity.ok("Mentor updated successfully.");
     }
+
 }

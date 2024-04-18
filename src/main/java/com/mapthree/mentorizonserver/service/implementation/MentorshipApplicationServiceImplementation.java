@@ -10,6 +10,7 @@ import com.mapthree.mentorizonserver.model.ApplicationStatus;
 import com.mapthree.mentorizonserver.model.User;
 import com.mapthree.mentorizonserver.repository.MentorshipApplicationRepository;
 import com.mapthree.mentorizonserver.repository.UserRepository;
+import com.mapthree.mentorizonserver.service.EmailService;
 import com.mapthree.mentorizonserver.service.MentorshipApplicationService;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,12 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
 
     private final MentorshipApplicationRepository repository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public MentorshipApplicationServiceImplementation(MentorshipApplicationRepository repository, UserRepository userRepository) {
+    public MentorshipApplicationServiceImplementation(MentorshipApplicationRepository repository, UserRepository userRepository, EmailService emailService) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -92,7 +95,37 @@ public class MentorshipApplicationServiceImplementation implements MentorshipApp
         MentorshipApplication application = repository.findById(applicationId)
                 .orElseThrow(() -> new MentorshipApplicationNotFoundException("Mentorship Application not found"));
         application.setStatus(status);
+
+        // sendEmail(application, status);
+
         return repository.save(application);
+    }
+
+    private void sendEmail(MentorshipApplication application, ApplicationStatus status) {
+        String menteeName = application.getMentee().getName();
+        String mentorName = application.getMentor().getName();
+        String email = application.getMentee().getEmail();
+        String subject = "Update on Your Mentorship Application";
+
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("<p>Dear ").append(menteeName).append(",</p>");
+
+        if (status == ApplicationStatus.APPROVED) {
+            messageBuilder.append("<p>We are pleased to inform you that your application to be mentored by ")
+                    .append(mentorName).append(" has been <strong>approved</strong>. ");
+            messageBuilder.append("You can now view your mentor's contact details and get in touch with them to start your mentorship journey.</p>");
+            messageBuilder.append("<p>Visit <strong><a href='http://localhost:3000/applications/").append(application.getId())
+                    .append("'>our website</a></strong> to see your mentor's profile and contact information.</p>");
+        } else if (status == ApplicationStatus.DENIED) {
+            messageBuilder.append("<p>We regret to inform you that your application has been denied. ");
+            messageBuilder.append("You can apply again in the future or choose another mentor that suits your learning goals.</p>");
+        }
+
+        messageBuilder.append("<p>Thank you for using our mentorship platform!</p>");
+        messageBuilder.append("<p>Best regards,<br>");
+        messageBuilder.append("The Mentorship Team</p>");
+
+        emailService.sendHtmlMessage(email, subject, messageBuilder.toString());
     }
 
     @Override
