@@ -34,6 +34,12 @@ public class UserController {
         return ResponseEntity.ok(mentorDTOList);
     }
 
+    @GetMapping("/mentors/{mentorId}")
+    public ResponseEntity<MentorReadDTO> getMentorById(@PathVariable UUID mentorId) {
+        MentorReadDTO mentorDTO = userService.findMentorById(mentorId);
+        return ResponseEntity.ok(mentorDTO);
+    }
+
     @PutMapping("/mentors/{mentorId}/approve")
     public ResponseEntity<?> approveMentor(@PathVariable UUID mentorId) {
         userService.approveMentor(mentorId);

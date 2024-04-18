@@ -15,5 +15,6 @@ public interface UserService {
                                               Integer yearsOfExperience,
                                               Integer rating,
                                               String sortBy);
+    MentorReadDTO findMentorById(UUID mentorId);
     void approveMentor(UUID mentorId);
 }

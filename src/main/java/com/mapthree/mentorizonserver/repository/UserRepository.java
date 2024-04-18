@@ -19,6 +19,4 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
     List<User> findByRole(@Param("roleName") RoleName roleName, Sort sort);
-
-
 }

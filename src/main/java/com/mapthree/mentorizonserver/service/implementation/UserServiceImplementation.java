@@ -75,6 +75,13 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    public MentorReadDTO findMentorById(UUID mentorId) {
+        return userRepository.findById(mentorId)
+                .map(this::convertToMentorDTO)
+                .orElseThrow(() -> new UserNotFoundException("Mentor not found"));
+    }
+
+    @Override
     public void approveMentor(UUID mentorId) {
         Optional<User> mentor = userRepository.findById(mentorId);
         if (mentor.isPresent()) {
