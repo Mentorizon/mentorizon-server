@@ -8,6 +8,7 @@ import com.mapthree.mentorizonserver.dto.user.create.UserCreateDTO;
 import com.mapthree.mentorizonserver.exception.EmailInUseException;
 import com.mapthree.mentorizonserver.exception.SignupInformationException;
 import com.mapthree.mentorizonserver.exception.UserNotFoundException;
+import com.mapthree.mentorizonserver.exception.user.UserBlockedException;
 import com.mapthree.mentorizonserver.model.*;
 import com.mapthree.mentorizonserver.repository.DomainRepository;
 import com.mapthree.mentorizonserver.repository.MentorDetailsRepository;
@@ -20,7 +21,6 @@ import com.mapthree.mentorizonserver.security.config.JwtService;
 import com.mapthree.mentorizonserver.service.FileManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +28,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -154,7 +153,7 @@ public class AuthenticationService {
         User user = userOptional.orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (user.isBlocked()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is blocked");
+            throw new UserBlockedException("Access denied. Your account has been blocked.");
         }
 
         var jwtToken = jwtService.generateToken(user);

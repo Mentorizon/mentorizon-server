@@ -21,10 +21,10 @@ public class MentorReadDTO extends UserReadDTO {
     private int ratingsNumber;
     private boolean isApproved;
 
-    public MentorReadDTO(UUID id, String name, String email, LocalDateTime createdAt, String jobTitle, String description,
+    public MentorReadDTO(UUID id, String name, String email, LocalDateTime createdAt, boolean isBlocked, String jobTitle, String description,
                          int yearsOfExperience, Set<String> domains, String cvName, String contactInfo, double rating,
                          int ratingsNumber, boolean isApproved) {
-        super(id, name, email, createdAt);
+        super(id, name, email, createdAt, isBlocked);
         this.jobTitle = jobTitle;
         this.description = description;
         this.yearsOfExperience = yearsOfExperience;

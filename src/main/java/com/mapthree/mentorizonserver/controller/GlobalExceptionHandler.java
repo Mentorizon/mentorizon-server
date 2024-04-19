@@ -6,6 +6,7 @@ import com.mapthree.mentorizonserver.exception.UserNotFoundException;
 import com.mapthree.mentorizonserver.exception.mentorshipapplication.AlreadyMentoredException;
 import com.mapthree.mentorizonserver.exception.mentorshipapplication.ApplicationPendingException;
 import com.mapthree.mentorizonserver.exception.mentorshipapplication.MentorshipApplicationNotFoundException;
+import com.mapthree.mentorizonserver.exception.user.UserBlockedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -80,6 +81,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
         e.printStackTrace();
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<String> handleUserBlockedException(UserBlockedException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(MentorshipApplicationNotFoundException.class)

@@ -46,7 +46,7 @@ public class UserController {
         return ResponseEntity.ok("Mentor updated successfully.");
     }
 
-    @PostMapping("/users/{userId}/block")
+    @PutMapping("/users/{userId}/block")
     public ResponseEntity<?> blockUser(@PathVariable UUID userId) {
         userService.blockUser(userId);
         return ResponseEntity.ok("User is blocked successfully.");

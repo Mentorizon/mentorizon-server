@@ -108,7 +108,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     private MenteeReadDTO convertToMenteeDTO(User mentee) {
-        return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail(), mentee.getCreatedAt());
+        return new MenteeReadDTO(mentee.getId(), mentee.getName(), mentee.getEmail(), mentee.getCreatedAt(), mentee.isBlocked());
     }
 
     private List<MentorReadDTO> convertToMentorDTOList(List<User> mentors) {
@@ -126,9 +126,9 @@ public class UserServiceImplementation implements UserService {
         int ratingsNumber = ratingRepository.countByMentorId(mentor.getId());
 
         return new MentorReadDTO(mentor.getId(), mentor.getName(), mentor.getEmail(), mentor.getCreatedAt(),
-                mentorDetails.getJobTitle(), mentorDetails.getDescription(), mentorDetails.getYearsOfExperience(),
-                domainNames, mentorDetails.getCvName(), mentorDetails.getContactInfo(), mentorDetails.getRating(),
-                ratingsNumber, mentorDetails.isApproved());
+                mentor.isBlocked(), mentorDetails.getJobTitle(), mentorDetails.getDescription(),
+                mentorDetails.getYearsOfExperience(), domainNames, mentorDetails.getCvName(),
+                mentorDetails.getContactInfo(), mentorDetails.getRating(), ratingsNumber, mentorDetails.isApproved());
     }
 
 }

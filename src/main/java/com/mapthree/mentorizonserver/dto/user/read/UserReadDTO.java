@@ -15,4 +15,5 @@ public class UserReadDTO {
     private String name;
     private String email;
     private LocalDateTime createdAt;
+    private boolean isBlocked;
 }
