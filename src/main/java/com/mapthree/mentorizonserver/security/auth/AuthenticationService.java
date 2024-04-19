@@ -20,6 +20,7 @@ import com.mapthree.mentorizonserver.security.config.JwtService;
 import com.mapthree.mentorizonserver.service.FileManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -150,6 +152,10 @@ public class AuthenticationService {
 
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         User user = userOptional.orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (user.isBlocked()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is blocked");
+        }
 
         var jwtToken = jwtService.generateToken(user);
         return ResponseEntity.ok(AuthenticationResponse.builder()

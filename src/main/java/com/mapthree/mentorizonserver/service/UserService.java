@@ -17,4 +17,5 @@ public interface UserService {
                                               String sortBy);
     MentorReadDTO findMentorById(UUID mentorId);
     void approveMentor(UUID mentorId);
+    void blockUser(UUID userId);
 }

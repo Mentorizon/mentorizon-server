@@ -93,6 +93,14 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
+    @Override
+    public void blockUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        user.setBlocked(true);
+        userRepository.save(user);
+    }
+
     private List<MenteeReadDTO> convertToMenteeDTOList(List<User> mentees) {
         return mentees.stream()
                 .map(this::convertToMenteeDTO)
