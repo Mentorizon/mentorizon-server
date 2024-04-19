@@ -1,0 +1,1 @@
+ALTER TABLE user_data ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;
